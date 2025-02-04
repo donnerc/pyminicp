@@ -17,7 +17,7 @@ class Domain:
             n: The number of values in the domain.
         """
         if len(args) != 1:
-            raise TypeError('Domain takes only one parameter')
+            raise TypeError("Domain takes only one parameter")
         elif isinstance(args[0], int):
             n = args[0]
             self.values = set(range(n))
@@ -26,7 +26,6 @@ class Domain:
             self.values = dom.copy()
         else:
             raise TypeError("Argument must be int or Domain")
-            
 
     def is_fixed(self) -> bool:
         """
@@ -45,6 +44,12 @@ class Domain:
             The number of values in the domain.
         """
         return len(self.values)
+    
+    def __len__(self) -> int:
+        """
+        Same as .size()
+        """
+        return self.size()
 
     def min(self) -> int:
         """
@@ -55,26 +60,6 @@ class Domain:
         """
         return min(self.values)
 
-    def removeold(self, v: int) -> bool:
-        """
-        Removes value v from the domain
-
-        Args:
-            v: The value to remove.
-
-        Returns:
-            True if the value was present in the domain, False otherwise.
-        """
-        if 0 <= v < len(self.values):
-            try:
-                self.values.remove(v)
-            except KeyError:
-                return False
-            if not self.values:
-                raise Inconsistency
-            return True
-        return False
-    
     def remove(self, v: int) -> bool:
         """
         Removes value v from the domain
