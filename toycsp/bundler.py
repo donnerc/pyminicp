@@ -1,5 +1,6 @@
 
 from datetime import datetime
+import os
 
 def is_import(line: str) -> bool:
     return line.startswith('from ') or line.startswith('import ')
@@ -26,7 +27,7 @@ preamble = f'''
 # Single file bundle of toycsp generated on {datetime.now()}
 # Do not modify file
 # Regenerate with 
-#   python build_singlefile.py
+#   python {os.path.basename(__file__)} > csp_bundle.py
 #####################################################
 
 '''

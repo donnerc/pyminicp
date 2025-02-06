@@ -1,9 +1,9 @@
 
 #####################################################
-# Single file bundle of toycsp generated on 2025-02-06 23:50:18.789551
+# Single file bundle of toycsp generated on 2025-02-06 23:59:24.529439
 # Do not modify file
 # Regenerate with 
-#   python build_singlefile.py
+#   python bundler.py > csp_bundle.py
 #####################################################
 
 
