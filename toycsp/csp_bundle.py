@@ -1,6 +1,6 @@
 
 #####################################################
-# Single file bundle of toycsp generated on 2025-02-06 09:30:36.314222
+# Single file bundle of toycsp generated on 2025-02-06 23:40:56.056685
 # Do not modify file
 # Regenerate with 
 #   python build_singlefile.py
@@ -43,7 +43,7 @@ class Domain:
             dom = args[0]
             self.values = dom.copy()
         else:
-            raise TypeError("Argument must be int or Domain")
+            raise TypeError("Argument must be int or set[int]")
 
     def is_fixed(self) -> bool:
         """

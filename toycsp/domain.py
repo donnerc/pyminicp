@@ -25,7 +25,7 @@ class Domain:
             dom = args[0]
             self.values = dom.copy()
         else:
-            raise TypeError("Argument must be int or Domain")
+            raise TypeError("Argument must be int or set[int]")
 
     def is_fixed(self) -> bool:
         """
