@@ -40,7 +40,7 @@ for filename in [m + '.py' for m in my_modules]:
         for line in pylines:
             if is_import(line):
                 module = line.strip().split('from')[1].strip().split('import')[0].strip(' .')
-                if module not in my_modules:
+                if module not in my_modules and line not in imports:
                     imports.append(line)
             else:
                 codelines += [line]

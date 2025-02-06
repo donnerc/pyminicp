@@ -1,6 +1,6 @@
 
 #####################################################
-# Single file bundle of toycsp generated on 2025-02-03 22:56:50.952976
+# Single file bundle of toycsp generated on 2025-02-06 09:30:36.314222
 # Do not modify file
 # Regenerate with 
 #   python build_singlefile.py
@@ -8,6 +8,7 @@
 
 
 from typing import Set
+from collections.abc import Iterable
 from abc import ABC, abstractmethod
 from typing import override
 from typing import List, Optional, Any, Callable
@@ -117,13 +118,23 @@ class Domain:
         """
         return Domain(self.values)
 
+    def __repr__(self) -> str:
+        return f"Domain({self.values})"
 
 class Variable:
     
-    def __init__(self, n: int) -> None:
-        self.dom = Domain(n)
+    def __init__(self, dom: Iterable[int]) -> None:
+        self.dom = Domain(set(dom))
+        
+    def value(self) -> int:
+        if self.dom.is_fixed():
+            return self.dom.min()
+        else:
+            return None
         
     
+    def __repr__(self) -> str:
+        return f"Variable(dom={self.dom.values})"
 
 class Constraint(ABC):
     """
@@ -187,7 +198,7 @@ class ToyCSP:
         self.variables: List[Variable] = []
         self.n_recur = 0  # Number of recursive calls
 
-    def make_variable(self, dom_size: int) -> Variable:
+    def add_variable(self, domain: Iterable[int]) -> Variable:
         """
         Creates a variable with the given domain size.
 
@@ -197,11 +208,11 @@ class ToyCSP:
         Returns:
             A new Variable object.
         """
-        variable = Variable(dom_size)
-        self.variables.append(variable)
-        return variable
-
-    def not_equal(self, x: Variable, y: Variable, offset: int = 0) -> None:
+        var = Variable(domain)
+        self.variables.append(var)
+        return var
+    
+    def add_constraint(self, constraint: Constraint) -> Constraint:
         """
         Adds a not-equal constraint between two variables.
 
@@ -210,8 +221,9 @@ class ToyCSP:
             y: The second variable.
             offset: The offset value. Defaults to 0.
         """
-        self.constraints.append(NotEqual(x, y, offset))
+        self.constraints.append(constraint)
         self.fix_point()
+        
 
     def fix_point(self) -> bool:
         """
