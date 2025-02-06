@@ -6,7 +6,7 @@ def all_different(csp: ToyCSP, vars: list[Variable]) -> None:
     n = len(vars)
     for i in range(n):
         for j in range(i + 1, n):
-            csp.add_constraint(NotEqual(vars[i], vars[j]))
+            csp.post(NotEqual(vars[i], vars[j]))
 
 csp: ToyCSP = ToyCSP()
 

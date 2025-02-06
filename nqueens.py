@@ -10,11 +10,11 @@ def nqueens(n: int):
     for i in range(n):
         for j in range(i + 1, n):
             # Pas deux reines sur la même ligne,
-            csp.add_constraint(NotEqual(q[i], q[j], 0))
+            csp.post(NotEqual(q[i], q[j], 0))
             # Pas deux reines sur une diagonale montante
-            csp.add_constraint(NotEqual(q[i], q[j], i - j))
+            csp.post(NotEqual(q[i], q[j], i - j))
             # Pas deux reines sur une diagonale descendante
-            csp.add_constraint(NotEqual(q[i], q[j], j - i))
+            csp.post(NotEqual(q[i], q[j], j - i))
             
     def handle_solution(sol):
         solutions.append(sol)

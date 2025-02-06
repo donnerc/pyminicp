@@ -32,7 +32,7 @@ class ToyCSP:
         self.variables.append(var)
         return var
     
-    def add_constraint(self, constraint: Constraint) -> Constraint:
+    def post(self, constraint: Constraint) -> Constraint:
         """
         Adds a not-equal constraint between two variables.
 

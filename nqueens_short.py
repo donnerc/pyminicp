@@ -7,9 +7,9 @@ q: list[Variable] = [csp.add_variable(range(n)) for _ in range(n)]
 
 for i in range(n):
     for j in range(i + 1, n):
-        csp.add_constraint(NotEqual(q[i], q[j], 0))
-        csp.add_constraint(NotEqual(q[i], q[j], i - j))
-        csp.add_constraint(NotEqual(q[i], q[j], j - i))
+        csp.post(NotEqual(q[i], q[j], 0))
+        csp.post(NotEqual(q[i], q[j], i - j))
+        csp.post(NotEqual(q[i], q[j], j - i))
         
 def handle_solution(sol):
     solutions.append(sol)
@@ -17,5 +17,5 @@ def handle_solution(sol):
 solutions = []
 csp.dfs(on_solution=handle_solution)
 
-print(solutions)
+print(f"{solutions = }")
 
