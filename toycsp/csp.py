@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import List, Optional, Any, Callable
 
 from .constraint import Constraint
@@ -17,7 +18,7 @@ class ToyCSP:
         self.variables: List[Variable] = []
         self.n_recur = 0  # Number of recursive calls
 
-    def make_variable(self, dom_size: int) -> Variable:
+    def add_variable(self, domain: Iterable[int]) -> Variable:
         """
         Creates a variable with the given domain size.
 
@@ -27,11 +28,11 @@ class ToyCSP:
         Returns:
             A new Variable object.
         """
-        variable = Variable(dom_size)
-        self.variables.append(variable)
-        return variable
-
-    def not_equal(self, x: Variable, y: Variable, offset: int = 0) -> None:
+        var = Variable(domain)
+        self.variables.append(var)
+        return var
+    
+    def add_constraint(self, constraint: Constraint) -> Constraint:
         """
         Adds a not-equal constraint between two variables.
 
@@ -40,8 +41,9 @@ class ToyCSP:
             y: The second variable.
             offset: The offset value. Defaults to 0.
         """
-        self.constraints.append(NotEqual(x, y, offset))
+        self.constraints.append(constraint)
         self.fix_point()
+        
 
     def fix_point(self) -> bool:
         """

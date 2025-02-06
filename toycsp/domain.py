@@ -99,3 +99,6 @@ class Domain:
             A new Domain object with the same values.
         """
         return Domain(self.values)
+
+    def __repr__(self) -> str:
+        return f"Domain({self.values})"

@@ -1,4 +1,4 @@
-from .toycsp import *
+from .csp import *
 from .constraint import *
 from .domain import *
 from .exceptions import *
