@@ -1,15 +1,15 @@
-from toycsp import ToyCSP, Variable
+from toycsp import ToyCSP, Variable, NotEqual
 
-n = int(input("Taille du problème"))
+n = int(input("Taille du problème: "))
 
 csp: ToyCSP = ToyCSP()
-q: list[Variable] = [csp.make_variable(n) for _ in range(n)]
+q: list[Variable] = [csp.add_variable(range(n)) for _ in range(n)]
 
 for i in range(n):
     for j in range(i + 1, n):
-        csp.not_equal(q[i], q[j], 0)
-        csp.not_equal(q[i], q[j], i - j)
-        csp.not_equal(q[i], q[j], j - i)
+        csp.add_constraint(NotEqual(q[i], q[j], 0))
+        csp.add_constraint(NotEqual(q[i], q[j], i - j))
+        csp.add_constraint(NotEqual(q[i], q[j], j - i))
         
 def handle_solution(sol):
     solutions.append(sol)

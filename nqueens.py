@@ -1,20 +1,20 @@
-from toycsp import ToyCSP, Variable
+from toycsp import ToyCSP, Variable, NotEqual
 
 def nqueens(n: int):
     # problème
     csp: ToyCSP = ToyCSP()
     # variables de décision
-    q: list[Variable] = [csp.make_variable(n) for _ in range(n)]
+    q: list[Variable] = [csp.add_variable(range(n)) for _ in range(n)]
 
     ## Déclaration des contraintes du problème
     for i in range(n):
         for j in range(i + 1, n):
             # Pas deux reines sur la même ligne,
-            csp.not_equal(q[i], q[j], 0)
+            csp.add_constraint(NotEqual(q[i], q[j], 0))
             # Pas deux reines sur une diagonale montante
-            csp.not_equal(q[i], q[j], i - j)
+            csp.add_constraint(NotEqual(q[i], q[j], i - j))
             # Pas deux reines sur une diagonale descendante
-            csp.not_equal(q[i], q[j], j - i)
+            csp.add_constraint(NotEqual(q[i], q[j], j - i))
             
     def handle_solution(sol):
         solutions.append(sol)
