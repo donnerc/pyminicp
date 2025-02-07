@@ -1,13 +1,12 @@
 
 #####################################################
-# Single file bundle of toycsp generated on 2025-02-07 00:05:19.518202
+# Single file bundle of toycsp generated on 2025-02-07 01:12:38.653989
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
 #####################################################
 
 
-from typing import Set
 from collections.abc import Iterable
 from abc import ABC, abstractmethod
 from typing import override
