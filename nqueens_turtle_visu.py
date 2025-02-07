@@ -1,12 +1,7 @@
+from toycsp import ToyCSP
 from gturtle import *
 
-
 def draw_chess_board(csp: ToyCSP, x: int = -200, y: int = -100, size: int = 50, color="black") -> tuple[int, int]:
-    '''
-    Représente la solution `solution` aux coordonnées (x, y) avec des carrés
-    de taille `size` pixels avec la couleur `color`.
-    '''
-
     def square(cx, cy) -> None:
         setPos(cx - size / 2, cy - size / 2)
         for _ in range(4):
