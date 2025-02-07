@@ -35,3 +35,7 @@ class NotEqual(Constraint):
         elif self.y.dom.is_fixed():
             return self.x.dom.remove(self.y.dom.min() + self.offset)
         return False
+
+    def __repr__(self) -> str:
+        return f'NotEqual(x={self.x}, y={self.y}, offset={self.offset})'
+

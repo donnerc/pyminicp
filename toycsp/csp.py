@@ -13,10 +13,19 @@ class ToyCSP:
     Class representing a Tiny Constraint Satisfaction Problem (TCSP).
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+
         self.constraints: List[Constraint] = []
         self.variables: List[Variable] = []
         self.n_recur = 0  # Number of recursive calls
+
+        # collects all handlers (args beginning with `on_`)
+        self.handlers = {
+            arg: value for arg, value in kwargs.items() if arg.startswith("on_")
+        }
+
+    def no_op(self, csp: "ToyCSP") -> None:
+        pass
 
     def add_variable(self, domain: Iterable[int]) -> Variable:
         """
@@ -31,8 +40,8 @@ class ToyCSP:
         var = Variable(domain)
         self.variables.append(var)
         return var
-    
-    def post(self, constraint: Constraint) -> Constraint:
+
+    def post(self, constraint: Constraint, schedule_fixpoint=True) -> Constraint:
         """
         Adds a not-equal constraint between two variables.
 
@@ -42,8 +51,8 @@ class ToyCSP:
             offset: The offset value. Defaults to 0.
         """
         self.constraints.append(constraint)
-        self.fix_point()
-        
+        if schedule_fixpoint:
+            self.fix_point()
 
     def fix_point(self) -> bool:
         """
@@ -52,11 +61,30 @@ class ToyCSP:
         Returns:
             True if a fix point is reached (no more changes), False otherwise.
         """
+        self.handlers.get("on_beforefixpoint", self.no_op)(
+            self, {"event": "before fixpoint"}
+        )
         fix = False
         while not fix:
             fix = True
             for constraint in self.constraints:
-                fix &= not constraint.propagate()
+                was_usefull = constraint.propagate()
+                # if only one propagation is usefull amongst all constraints,
+                # fix will become false and the while
+                # loop will continue
+                fix &= not was_usefull
+                notify_propagate = self.handlers.get("on_propagate", self.no_op)
+                notify_propagate(
+                    self,
+                    {
+                        "event": f"propagating",
+                        "usefull": was_usefull,
+                        "constraint": constraint,
+                    },
+                )
+        self.handlers.get("on_afterfixpoint", self.no_op)(
+            self, {"event": "after fixpoint"}
+        )
         return fix
 
     def backup_domains(self) -> List[Domain]:
@@ -96,17 +124,19 @@ class ToyCSP:
         Returns:
             An Optional containing the variable with the smallest domain, or None if all are fixed.
         """
-        min_size = float('inf')
+        min_size = float("inf")
         smallest_var = None
         for var in self.variables:
             if not var.dom.is_fixed() and var.dom.size() < min_size:
                 min_size = var.dom.size()
                 smallest_var = var
-        #return smallest_var if smallest_var else None
+        # return smallest_var if smallest_var else None
         return smallest_var
-    
-    
-    def dfs(self, on_solution: Callable[[List[int]], Any]) -> None:
+
+    def get_solution(self) -> list[int]:
+        return [v.value() for v in self.variables]
+
+    def dfs(self, on_solution=None, on_fixpoint=None) -> None:
         """
         Performs Depth-First Search (DFS) to find all solutions to the CSP.
 
@@ -116,12 +146,13 @@ class ToyCSP:
         self.n_recur += 1
 
         # Choisissez une variable non fixée (première rencontrée ou la plus petite)
-        not_fixed = self.first_not_fixed()  # Essayer d'abord first_not_fixed (implémentation originale)
+        not_fixed = (
+            self.first_not_fixed()
+        )  # Essayer d'abord first_not_fixed (implémentation originale)
 
         if not not_fixed:
             # Toutes les variables sont fixées, une solution est trouvée
-            solution = [var.dom.min() for var in self.variables]
-            on_solution(solution)
+            self.handlers.get("on_solution", self.no_op)(self, infos={})
         else:
             variable = not_fixed
             value = variable.dom.min()
@@ -131,8 +162,11 @@ class ToyCSP:
             try:
                 variable.dom.fix(value)
                 self.fix_point()
-                self.dfs(on_solution)
+                self.dfs()
             except Inconsistency:
+                self.handlers.get("on_inconsistency", self.no_op)(
+                    self, {"event": "inconsistent", "current_var": variable}
+                )
                 pass
 
             # Restaurer les domaines avant d'explorer la branche droite
@@ -142,6 +176,9 @@ class ToyCSP:
             try:
                 variable.dom.remove(value)
                 self.fix_point()
-                self.dfs(on_solution)
+                self.dfs()
             except Inconsistency:
+                self.handlers.get("on_inconsistency", self.no_op)(
+                    self, {"event": "inconsitent", "current_var": variable}
+                )
                 pass
