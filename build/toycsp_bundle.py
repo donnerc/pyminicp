@@ -1,6 +1,6 @@
 
 #####################################################
-# Single file bundle of toycsp generated on 2025-02-07 12:09:47.245402
+# Single file bundle of toycsp generated on 2025-02-07 19:39:54.558902
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
@@ -195,6 +195,7 @@ class NotEqual(Constraint):
 
 
 
+
 class ToyCSP:
     """
     Class representing a Tiny Constraint Satisfaction Problem (TCSP).
@@ -208,10 +209,32 @@ class ToyCSP:
 
         # collects all handlers (args beginning with `on_`)
         self.handlers = {
-            arg: value for arg, value in kwargs.items() if arg.startswith("on_")
+            arg.split('on_')[1]: [value] for arg, value in kwargs.items() if arg.startswith("on_")
         }
 
-    def no_op(self, csp: "ToyCSP") -> None:
+    def __repr__(self) -> str:
+        #return f"ToyCSP(constraints={self.constraints}, variables={self.variables})"
+        return f"ToyCSP : #vars = {len(self.variables)} / #constraints = {len(self.constraints)}"
+
+    def register_handler(self, event, handler) -> None:
+        if event in self.handlers:
+            self.handlers[event].append(handler)
+        else:
+            self.handlers[event] = [handler]
+
+    def call_handlers(self, event: str, infos: dict[str, Any]) -> None:
+        if event in self.handlers:
+            handlers = self.handlers[event]
+            for h in handlers: h(self, infos)
+
+    def on(self, *events):
+        def decorator(func):
+            for event in events:
+                self.register_handler(event, func)
+        return decorator
+        
+
+    def no_op(self, csp: "ToyCSP", infos: dict[str, Any]) -> None:
         pass
 
     def add_variable(self, domain: Iterable[int]) -> Variable:
@@ -248,9 +271,8 @@ class ToyCSP:
         Returns:
             True if a fix point is reached (no more changes), False otherwise.
         """
-        self.handlers.get("on_beforefixpoint", self.no_op)(
-            self, {"event": "before fixpoint"}
-        )
+        self.call_handlers("beforefixpoint", {"event": "before fixpoint"})
+
         fix = False
         while not fix:
             fix = True
@@ -260,18 +282,14 @@ class ToyCSP:
                 # fix will become false and the while
                 # loop will continue
                 fix &= not was_usefull
-                notify_propagate = self.handlers.get("on_propagate", self.no_op)
-                notify_propagate(
-                    self,
-                    {
+                self.call_handlers("propagate", {
                         "event": f"propagating",
                         "usefull": was_usefull,
                         "constraint": constraint,
-                    },
-                )
-        self.handlers.get("on_afterfixpoint", self.no_op)(
-            self, {"event": "after fixpoint"}
-        )
+                    })
+
+        self.call_handlers("afterfixpoint", {"event": "after fixpoint"})
+
         return fix
 
     def backup_domains(self) -> List[Domain]:
@@ -339,7 +357,7 @@ class ToyCSP:
 
         if not not_fixed:
             # Toutes les variables sont fixées, une solution est trouvée
-            self.handlers.get("on_solution", self.no_op)(self, infos={})
+            self.call_handlers("solution", {})
         else:
             variable = not_fixed
             value = variable.dom.min()
@@ -369,4 +387,3 @@ class ToyCSP:
                     self, {"event": "inconsitent", "current_var": variable}
                 )
                 pass
-
