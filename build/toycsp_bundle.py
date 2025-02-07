@@ -1,6 +1,6 @@
 
 #####################################################
-# Single file bundle of toycsp generated on 2025-02-07 19:39:54.558902
+# Single file bundle of toycsp generated on 2025-02-07 23:12:09.897256
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
@@ -216,6 +216,7 @@ class ToyCSP:
         #return f"ToyCSP(constraints={self.constraints}, variables={self.variables})"
         return f"ToyCSP : #vars = {len(self.variables)} / #constraints = {len(self.constraints)}"
 
+    ############ Event handler registration and management
     def register_handler(self, event, handler) -> None:
         if event in self.handlers:
             self.handlers[event].append(handler)
@@ -233,9 +234,10 @@ class ToyCSP:
                 self.register_handler(event, func)
         return decorator
         
-
     def no_op(self, csp: "ToyCSP", infos: dict[str, Any]) -> None:
         pass
+    
+    ##############################################################3
 
     def add_variable(self, domain: Iterable[int]) -> Variable:
         """
@@ -369,10 +371,7 @@ class ToyCSP:
                 self.fix_point()
                 self.dfs()
             except Inconsistency:
-                self.handlers.get("on_inconsistency", self.no_op)(
-                    self, {"event": "inconsistent", "current_var": variable}
-                )
-                pass
+                self.call_handlers("inconsistent", {"event": "inconsistent", "current_var": variable})
 
             # Restaurer les domaines avant d'explorer la branche droite
             self.restore_domains(backup)
@@ -383,7 +382,5 @@ class ToyCSP:
                 self.fix_point()
                 self.dfs()
             except Inconsistency:
-                self.handlers.get("on_inconsistency", self.no_op)(
-                    self, {"event": "inconsitent", "current_var": variable}
-                )
-                pass
+                self.call_handlers("inconsistent", {"event": "inconsistent", "current_var": variable})
+
