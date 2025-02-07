@@ -1,5 +1,4 @@
-from toycsp import ToyCSP, Variable
-from toycsp.csp_bundle import NotEqual
+from toycsp import ToyCSP, Variable, NotEqual
 from itertools import product
 
 def all_different(csp: ToyCSP, vars: list[Variable]) -> None:
@@ -66,7 +65,8 @@ def show_solution():
     for i in range(9):
         print(" ".join(str(X[i][j].value()) for j in range(9)))
         
-def handle_solution(sol):
+@csp.on('solution')
+def handle_solution(csp, infos):
     show_solution()
 
-csp.dfs(on_solution=handle_solution)
+csp.dfs()

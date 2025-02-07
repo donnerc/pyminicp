@@ -15,13 +15,14 @@ def nqueens(n: int):
             csp.post(NotEqual(q[i], q[j], i - j))
             # Pas deux reines sur une diagonale descendante
             csp.post(NotEqual(q[i], q[j], j - i))
-            
-    def handle_solution(sol):
-        solutions.append(sol)
+    
+    @csp.on('solution')
+    def handle_solution(csp, infos):
+        solutions.append(csp.get_solution())
         #print(sol)
 
     solutions = []
-    csp.dfs(on_solution=handle_solution)
+    csp.dfs()
     
     return solutions
 

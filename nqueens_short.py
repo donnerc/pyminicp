@@ -10,12 +10,12 @@ for i in range(n):
         csp.post(NotEqual(q[i], q[j], 0))
         csp.post(NotEqual(q[i], q[j], i - j))
         csp.post(NotEqual(q[i], q[j], j - i))
-        
-def handle_solution(sol):
-    solutions.append(sol)
+
+@csp.on('solution')
+def handle_solution(csp, infos):
+    solutions.append(csp.get_solution())
 
 solutions = []
-csp.dfs(on_solution=handle_solution)
+csp.dfs()
 
 print(f"{solutions = }")
-
