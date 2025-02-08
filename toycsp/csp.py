@@ -50,7 +50,7 @@ class ToyCSP:
     def no_op(self, csp: "ToyCSP", infos: dict[str, Any]) -> None:
         pass
     
-    ##############################################################3
+    ###############################################################
 
     def add_variable(self, domain: Iterable[int]) -> Variable:
         """
@@ -79,6 +79,55 @@ class ToyCSP:
         if schedule_fixpoint:
             self.fix_point()
 
+    def backup_domains(self) -> List[Domain]:
+        """
+        Creates a backup copy of all variable domains.
+
+        Returns:
+            A list of Domain objects representing the backed-up domains.
+        """
+        backup = [var.dom.clone() for var in self.variables]
+        return backup
+
+    def restore_domains(self, backup: List[Domain]) -> None:
+        """
+        Restores the domains of all variables from the backup.
+
+        Args:
+            backup: A list of Domain objects representing the backed-up domains.
+        """
+        for i, var in enumerate(self.variables):
+            var.dom = backup[i]
+
+    def get_solution(self) -> list[int]:
+        return [v.value() for v in self.variables]
+
+    def first_not_fixed(self) -> Optional[Variable]:
+        """
+        Finds the first variable that has a non-fixed domain.
+
+        Returns:
+            An Optional containing the first unfixed variable, or None if all are fixed.
+        """
+        # https://www.programiz.com/python-programming/methods/built-in/next
+        return next((var for var in self.variables if not var.dom.is_fixed()), None)
+
+    def smallest_not_fixed(self) -> Optional[Variable]:
+        """
+        Finds the variable with the smallest domain size that is not fixed.
+
+        Returns:
+            An Optional containing the variable with the smallest domain, or None if all are fixed.
+        """
+        min_size = float("inf")
+        smallest_var = None
+        for var in self.variables:
+            if not var.dom.is_fixed() and var.dom.size() < min_size:
+                min_size = var.dom.size()
+                smallest_var = var
+        # return smallest_var if smallest_var else None
+        return smallest_var
+    
     def fix_point(self) -> bool:
         """
         Performs constraint propagation until no further changes occur.
@@ -106,55 +155,6 @@ class ToyCSP:
         self.call_handlers("afterfixpoint", {"event": "after fixpoint"})
 
         return fix
-
-    def backup_domains(self) -> List[Domain]:
-        """
-        Creates a backup copy of all variable domains.
-
-        Returns:
-            A list of Domain objects representing the backed-up domains.
-        """
-        backup = [var.dom.clone() for var in self.variables]
-        return backup
-
-    def restore_domains(self, backup: List[Domain]) -> None:
-        """
-        Restores the domains of all variables from the backup.
-
-        Args:
-            backup: A list of Domain objects representing the backed-up domains.
-        """
-        for i, var in enumerate(self.variables):
-            var.dom = backup[i]
-
-    def first_not_fixed(self) -> Optional[Variable]:
-        """
-        Finds the first variable that has a non-fixed domain.
-
-        Returns:
-            An Optional containing the first unfixed variable, or None if all are fixed.
-        """
-        # https://www.programiz.com/python-programming/methods/built-in/next
-        return next((var for var in self.variables if not var.dom.is_fixed()), None)
-
-    def smallest_not_fixed(self) -> Optional[Variable]:
-        """
-        Finds the variable with the smallest domain size that is not fixed.
-
-        Returns:
-            An Optional containing the variable with the smallest domain, or None if all are fixed.
-        """
-        min_size = float("inf")
-        smallest_var = None
-        for var in self.variables:
-            if not var.dom.is_fixed() and var.dom.size() < min_size:
-                min_size = var.dom.size()
-                smallest_var = var
-        # return smallest_var if smallest_var else None
-        return smallest_var
-
-    def get_solution(self) -> list[int]:
-        return [v.value() for v in self.variables]
 
     def dfs(self, on_solution=None, on_fixpoint=None) -> None:
         """
