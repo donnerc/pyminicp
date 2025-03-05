@@ -2,7 +2,8 @@ from typing import Generic, TypeVar
 from collections.abc import Iterable
 
 from stack import StackADT, StackException, EmptyStackError
-from state import StateManager, StateInt, CopyStateManager
+from state_types import StateManager, StateInt
+from state import CopyStateManager
 
 T = TypeVar('T')
 

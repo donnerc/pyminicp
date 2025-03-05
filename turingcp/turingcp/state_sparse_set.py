@@ -1,8 +1,8 @@
-
-
 from collections.abc import Iterable
 
-from state import StateManager, StateInt, CopyStateManager
+from state_types import StateManager, StateInt
+
+from state import CopyStateManager
 
 
 class NoSuchElementException(Exception):
@@ -82,7 +82,7 @@ class StateSparseSet:
         self._size: StateInt = sm.make_state_int(b - a + 1)
         self._min: StateInt = sm.make_state_int(0)
         self._max: StateInt = sm.make_state_int(b - a)
-        
+
         self._offset: int = a
         self._values: list[int] = list(range(0, b + 1 - a))
         self._indices: list[int] = self._values[:]
@@ -226,7 +226,7 @@ class StateSparseSet:
         >>> s.remove_above(5)
         >>> s
         StateSparseSet([3, 4, 5])
-        
+
         >>> sm = CopyStateManager()
         >>> s = StateSparseSet(sm, [1, 3, 5, 6, 7])
         >>> s.remove_above(5)
@@ -251,7 +251,7 @@ class StateSparseSet:
         >>> s.remove_below(5)
         >>> s
         StateSparseSet([5, 6, 7])
-        
+
         >>> sm = CopyStateManager()
         >>> s = StateSparseSet(sm, [1, 3, 5, 6, 7])
         >>> s.remove_below(5)
@@ -322,7 +322,7 @@ class StateSparseSet:
         >>> s.to_list()
         [1, 2, 3]
         """
-        return sorted([x + self._offset for x in self._values[:len(self)]])
+        return sorted([x + self._offset for x in self._values[: len(self)]])
 
     def to_set(self) -> set[int]:
         """
@@ -345,8 +345,9 @@ class StateSparseSet:
         """
         return "{" + ", ".join(str(x) for x in self.to_list()) + "}"
 
+
 def intern_tests():
-    '''
+    """
     >>> sm = CopyStateManager()
     >>> s = StateSparseSet(sm, range(8))
     >>> s
@@ -355,7 +356,7 @@ def intern_tests():
     [0, 1, 2, 3, 4, 5, 6, 7]
     >>> s._indices
     [0, 1, 2, 3, 4, 5, 6, 7]
-    
+
     [0, 4, 2, 3, 1]
     >>> s._size.value()
     8
@@ -388,13 +389,13 @@ def intern_tests():
     [6, 5, 2, 3, 1, 0, 7, 4]
     >>> s._indices
     [5, 4, 2, 3, 7, 1, 0, 6]
-    
-    '''
+
+    """
     ...
-    
+
 
 def state_tests():
-    '''
+    """
     >>> sm = CopyStateManager()
     >>> s = StateSparseSet(sm, range(5))
     >>> sm.save_state()
@@ -428,8 +429,10 @@ def state_tests():
     -1
     >>> s
     StateSparseSet([0, 1, 2, 3, 4])
-    '''
+    """
+
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

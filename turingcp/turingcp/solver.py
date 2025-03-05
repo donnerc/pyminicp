@@ -1,44 +1,16 @@
-from abc import ABC, abstractmethod
-from typing import Protocol, Deque
+
+from typing import Deque
 
 from collections import deque
 
+from cp_types import CPSolver, IntVar, BoolVar, Constraint
+
 from state import StateManager
-from utils import Procedure, InconsistencyException
+from util_types import Procedure
 from state_stack import StateStack
 from linked_queue import LinkedQueue
-from constraint import Constraint
-from variable import IntVar, BoolVar
 
-
-
-class Objective(Protocol):
-
-    def tighten(self) -> None: ...
-
-
-class CPSolver(ABC):
-    @abstractmethod
-    def post(self, c: Constraint | BoolVar, enforce_fix_point: bool = True) -> None: ...
-
-    @abstractmethod
-    def schedule(self, c: Constraint) -> None: ...
-
-    @abstractmethod
-    def fix_point(self) -> None: ...
-
-    @abstractmethod
-    def get_state_manager(self) -> StateManager: ...
-
-    @abstractmethod
-    def on_fix_point(self, listener: Procedure) -> None: ...
-
-    @abstractmethod
-    def minimize(self, x: IntVar) -> Objective: ...
-
-    @abstractmethod
-    def maximize(self, x: IntVar) -> Objective: ...
-
+from utils import InconsistencyException
 
 class TuringCP(CPSolver):
 

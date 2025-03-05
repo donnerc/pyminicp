@@ -1,21 +1,28 @@
 from collections.abc import Iterable 
 
-from solver import CPSolver
-from constraint import Constraint
+from cp_types import CPSolver, IntVar, Constraint
 from utils import Procedure
-from domain import IntDomain
-from domain import SparseSetDomain
+from domain import IntDomain, SparseSetDomain
 from state_stack import StateStack
 from state import StateManager
 
 
-class IntVar:
+class IntVarImpl(IntVar):
+    '''
+    >>> v = IntVar([2, 3, 4])
+    >>> v
+    '''
     
-    def __init__(self, cp: CPSolver, values: Iterable[int]):
-        self.cp: CPSolver = cp
+    var_counter: int = 0
+    
+    def __init__(self, solver: CPSolver, values: Iterable[int], name: str | None = None) -> None:
+        self.solver: CPSolver = solver
         self.domain: IntDomain = SparseSetDomain(values)
+        self.name = name or f"Var_{IntVar.var_counter}"
         
-        sm: StateManager = cp.get_state_manager()
+        IntVar.var_counter += 1
+        
+        sm: StateManager = solver.get_state_manager()
         self.on_domain: StateStack[Constraint] = StateStack(sm)
         self.on_fix: StateStack[Constraint] = StateStack(sm)
         self.on_bound: StateStack[Constraint] = StateStack(sm)
@@ -38,7 +45,8 @@ class IntVar:
 
     def size(self) -> int: ...
 
-    def is_fixed(self) -> bool: ...
+    def is_fixed(self) -> bool:
+        return self.domain.is_fixed()
 
     def contains(self, v: int) -> bool: ...
 
@@ -49,6 +57,9 @@ class IntVar:
     def remove_below(self, v: int) -> None: ...
 
     def remove_above(self, v: int) -> None: ...
+    
+    def __repr__(self) -> str:
+        return f"IntVar(domain={repr(self.domain)}, name='{self.name}')"
 
 
 class BoolVar(IntVar):
@@ -58,3 +69,8 @@ class BoolVar(IntVar):
     def is_false(self) -> bool: ...
 
     def fix(b: bool) -> None: ...
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

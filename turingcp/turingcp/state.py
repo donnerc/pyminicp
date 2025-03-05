@@ -8,40 +8,12 @@ await get_module('turing-cp-2025', 'turingcp_stack', 'stack')
 ############################################################
 """
 
-from collections.abc import Callable
-from typing import Protocol
-
 from stack import Stack
 
-Procedure = Callable[[], None]
+from util_types import Procedure
+from state_types import *
 
-
-class State[T](Protocol):
-
-    def set_value(self, v: T) -> T: ...
-
-    def value(self) -> T: ...
-
-    def __str__(self) -> str: ...
-
-
-class StateEntry(Protocol):
-
-    def restore(self) -> None: ...
-
-
-class Storage(Protocol):
-
-    def save(self) -> StateEntry: ...
-
-
-class StateInt(State[int]):
-
-    def increment(self) -> int:
-        return self.set_value(self.value() + 1)
-
-    def decrement(self) -> int:
-        return self.set_value(self.value() - 1)
+from stack import Stack
 
 
 class Copy[T](Storage, State[T]):
@@ -80,19 +52,6 @@ class CopyInt(Copy[int], StateInt):
     def __init__(self, init_value: int) -> None:
         super().__init__(init_value)
 
-class StateManager(Protocol):
-    
-    def save_state(self) -> None: ...
-    
-    def restore_state(self) -> None: ...
-    
-    def restore_state_until(self, level: int) -> None: ...
-    
-    def on_restore(self, listener: Procedure) -> None: ...
-    
-    def get_level(self) -> int: ...
-    
-    def make_state_int(self, init_value: int) -> StateInt: ...
     
 
 class CopyStateManager[T](StateManager):
@@ -168,7 +127,8 @@ class CopyStateManager[T](StateManager):
         def restore(self) -> None:
             for state_entry in self:
                 state_entry.restore()
-
+                
+                
     def __init__(self) -> None:
         self.store: Stack[Storage] = Stack[Storage]()
         self.prior: Stack[self.Backup] = Stack[self.Backup]()

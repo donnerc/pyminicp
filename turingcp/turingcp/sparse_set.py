@@ -136,7 +136,7 @@ class SparseSet:
         >>> s.remove(1)
         True
         >>> s.min()
-        3<<x
+        3
         >>> s.remove(4)
         True
         >>> s.max()

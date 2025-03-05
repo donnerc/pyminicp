@@ -1,51 +1,14 @@
 from abc import ABC, abstractmethod
-
-from collections import namedtuple
 from collections.abc import Iterable
 
 from state_sparse_set import StateSparseSet
 from state import StateManager, CopyStateManager
 
-DomainListener = namedtuple(
-    "DomainListener", ["change", "change_max", "change_min", "fix", "empty"]
-)
-
-
-class IntDomain(ABC):
-
-    @abstractmethod
-    def min(self) -> int: ...
-
-    @abstractmethod
-    def max(self) -> int: ...
-
-    @abstractmethod
-    def __len__(self) -> int: ...
-
-    @abstractmethod
-    def __contains__(self, v: int) -> bool: ...
-
-    @abstractmethod
-    def is_fixed(self) -> bool: ...
-
-    @abstractmethod
-    def remove(self, v: int, listener: DomainListener) -> None: ...
-
-    @abstractmethod
-    def remove_all_but(self, v: int, listener: DomainListener) -> None: ...
-
-    @abstractmethod
-    def remove_below(self, v: int, listener: DomainListener) -> None: ...
-
-    @abstractmethod
-    def remove_above(self, v: int, listener: DomainListener) -> None: ...
-
-    @abstractmethod
-    def __repr__(self) -> str: ...
+from cp_types import IntDomain, DomainListener
 
 
 class SparseSetDomain(IntDomain):
-    '''
+    """
     >>> listener = DomainListener(change=lambda: print("changed"), change_max=lambda: print("max changed"), change_min=lambda: print("min changed"), fix=lambda: print("fixed"), empty=lambda: print("all values removed"))
     >>> sm = CopyStateManager()
     >>> d = SparseSetDomain(sm, range(5, 10))
@@ -113,7 +76,7 @@ class SparseSetDomain(IntDomain):
     >>> sm.restore_state_until(-1)
     >>> d
     SparseSetDomain([6, 8, 9])
-    '''
+    """
 
     def __init__(self, sm: StateManager, values: Iterable[int]):
         self.domain: StateSparseSet = StateSparseSet(sm, values)
@@ -158,7 +121,7 @@ class SparseSetDomain(IntDomain):
                     listener.empty()
                 listener.fix()
                 listener.change()
-                
+
                 if min_changed:
                     listener.change_min()
                 if max_changed:
@@ -168,7 +131,6 @@ class SparseSetDomain(IntDomain):
         else:
             self.domain.remove_all()
             listener.empty()
-        
 
     def remove_below(self, v: int, listener: DomainListener) -> None:
         if v > self.domain.min():
@@ -178,10 +140,9 @@ class SparseSetDomain(IntDomain):
             else:
                 if len(self.domain) == 1:
                     listener.fix()
-                
+
                 listener.change_min()
                 listener.change()
-                
 
     def remove_above(self, v: int, listener: DomainListener) -> None:
         if v < self.domain.max():
@@ -191,14 +152,15 @@ class SparseSetDomain(IntDomain):
             else:
                 if len(self.domain) == 1:
                     listener.fix()
-                
+
                 listener.change_min()
                 listener.change()
-                
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.domain.to_list()})'
+        return f"{self.__class__.__name__}({self.domain.to_list()})"
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
