@@ -44,7 +44,7 @@ class Copy[T](Storage, State[T]):
         return self.CopyStateEntry(self)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self._v})"
+        return f"{self.__class__.__name__}({repr(self._v)})"
 
 
 class CopyInt(Copy[int], StateInt):
@@ -52,9 +52,8 @@ class CopyInt(Copy[int], StateInt):
     def __init__(self, init_value: int) -> None:
         super().__init__(init_value)
 
-    
 
-class CopyStateManager[T](StateManager):
+class CopyStateManager(StateManager):
     """
     >>> sm = CopyStateManager()
     >>> sm.get_level()
@@ -96,7 +95,7 @@ class CopyStateManager[T](StateManager):
     >>> x
     CopyInt(1)
     >>> y
-    
+    CopyInt(10)
     >>> sm.get_level()
     -1
 
@@ -127,8 +126,7 @@ class CopyStateManager[T](StateManager):
         def restore(self) -> None:
             for state_entry in self:
                 state_entry.restore()
-                
-                
+
     def __init__(self) -> None:
         self.store: Stack[Storage] = Stack[Storage]()
         self.prior: Stack[self.Backup] = Stack[self.Backup]()
@@ -155,7 +153,7 @@ class CopyStateManager[T](StateManager):
     def restore_state(self) -> None:
         self.prior.pop().restore()
         self.notify_restore()
-        
+
     def restore_state_until(self, level: int) -> None:
         while self.get_level() > level:
             self.restore_state()
@@ -168,6 +166,36 @@ class CopyStateManager[T](StateManager):
         self.store.push(s)
         return s
 
+    def make_state_obj[T](self, obj: T) -> State[T]:
+        '''
+        >>> sm = CopyStateManager()
+        >>> obj = sm.make_state_obj(True)        
+        >>> obj
+        Copy(True)
+        >>> sm.save_state()
+        Stack([Backup([CopyStateEntry(True)])])
+        >>> obj.set_value(False)
+        False
+        >>> obj
+        Copy(False)
+        
+        >>> sm = CopyStateManager()
+        >>> obj = sm.make_state_obj([1, 2, 3])        
+        >>> obj
+        Copy([1, 2, 3])
+        >>> sm.save_state()
+        Stack([Backup([CopyStateEntry([1, 2, 3])])])
+        >>> obj.set_value("this is a bad example")
+        'this is a bad example'
+        >>> obj
+        Copy('this is a bad example')
+        >>> sm.restore_state()
+        >>> obj
+        Copy([1, 2, 3])
+        '''
+        r: Copy = Copy(init_value=obj)
+        self.store.push(r)
+        return r
 
 if __name__ == "__main__":
     import doctest

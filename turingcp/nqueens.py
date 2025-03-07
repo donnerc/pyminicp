@@ -1,71 +1,47 @@
-from turingcp.state import CopyStateManager
-from turingcp.solver import TuringCP as Solver
+from turingcp.modeling import int_var, post
+from turingcp.constraint import NotEqual
+from turingcp.search import dfs_branching
 
 
 NQueensSolution = list[int]
 
+
 def nqueens(n: int = 8) -> list[NQueensSolution]:
     solutions: NQueensSolution = []
-    
-    cp = Solver(sm=CopyStateManager())
-    q: list[IntVar] = []
-    
+
+    # variables
+    q = [int_var(range(0, n)) for _ in range(n)]
+
+    # constraints
+    for i in range(0, n):
+        for j in range(i + 1, n):
+            post(NotEqual(q[i], q[j], 0))
+            post(NotEqual(q[i], q[j], i - j))
+            post(NotEqual(q[i], q[j], j - i))
+
+    # solving
+    @on_solution
+    def handle_solution(solution):
+        solutions.append(solution)
+
+    @strategy
+    def solve():
+        for var in q:
+            if not var.is_fixed():
+                break
+        else:
+            return []
+
+        v: int = var.min()
+        left = post(Equal(var, v))
+        right = post(NotEqual(var, v))
+        return [left, right]
+
+    solve()
+
     return solutions
 
 
-
-
-'''
-public class NQueens {
-    public static void main(String[] args) {
-        int n = 4;
-        Solver cp = Factory.makeSolver(false);
-        IntVar[] q = Factory.makeIntVarArray(cp, n, n);
-
-
-        for (int i = 0; i < n; i++)
-            for (int j = i + 1; j < n; j++) {
-                cp.post(Factory.notEqual(q[i], q[j]));
-
-                cp.post(Factory.notEqual(q[i], q[j], j - i));
-                cp.post(Factory.notEqual(q[i], q[j], i - j));
-                // alternative modeling using views
-                // cp.post(notEqual(plus(q[i], j - i), q[j]));
-                // cp.post(notEqual(minus(q[i], j - i), q[j]));
-
-            }
-
-
-
-        DFSearch search = Factory.makeDfs(cp, () -> {
-            int idx = -1; // index of the first variable that is not fixed
-            for (int k = 0; k < q.length; k++)
-                if (q[k].size() > 1) {
-                    idx = k;
-                    break;
-                }
-            if (idx == -1)
-                return new Procedure[0];
-            else {
-                IntVar qi = q[idx];
-                int v = qi.min();
-                Procedure left = () -> cp.post(Factory.equal(qi, v));
-                Procedure right = () -> cp.post(Factory.notEqual(qi, v));
-                return new Procedure[]{left, right};
-            }
-        });
-
-        search.onSolution(() ->
-                System.out.println("solution:" + Arrays.toString(q))
-        );
-        SearchStatistics stats = search.solve(statistics -> statistics.numberOfSolutions() == 1000);
-
-        //search.showTree("NQUEENS");
-
-        System.out.format("#Solutions: %s\n", stats.numberOfSolutions());
-        System.out.format("Statistics: %s\n", stats);
-
-    }
-}
-
-'''
+if __name__ == "__main__":
+    solutions = nqueens(n=8)
+    print(solutions)

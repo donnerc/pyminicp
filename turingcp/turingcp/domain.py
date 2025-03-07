@@ -86,7 +86,7 @@ class SparseSetDomain(IntDomain):
 
     def max(self) -> int:
         return self.domain.max()
-
+    
     def __len__(self) -> int:
         return len(self.domain)
 

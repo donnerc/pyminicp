@@ -1,4 +1,3 @@
-
 from typing import Deque
 
 from collections import deque
@@ -11,6 +10,7 @@ from state_stack import StateStack
 from linked_queue import LinkedQueue
 
 from utils import InconsistencyException
+
 
 class TuringCP(CPSolver):
 
@@ -36,11 +36,20 @@ class TuringCP(CPSolver):
             listener()
 
     def fix_point(self) -> None:
+        """
+
+        Applies the fix point algorithm to all constraints scheduled in the
+        propagation queue until no propagation is possible (propagation queue
+        empty) or until reaching inconsistency. On inconsistency, unschedules
+        all the constraints.
+
+        """
         try:
             self._notify_fix_point()
             while len(self._propagation_queue) > 0:
                 self._propagate(self._propagation_queue.popleft())
         except InconsistencyException as e:
+            # set all the constraints in propagation queue to unscheduled
             while len(self._propagation_queue) > 0:
                 self._propagation_queue.popleft().set_scheduled(False)
             raise e
