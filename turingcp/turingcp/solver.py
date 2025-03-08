@@ -16,9 +16,13 @@ class TuringCP(CPSolver):
 
     def __init__(self, sm: StateManager) -> None:
         self._propagation_queue: Deque[Constraint] = deque()
-        self._fix_point_listeners: LinkedQueue[Procedure]
+        self._fix_point_listeners: LinkedQueue[Procedure] = LinkedQueue()
         self._sm = sm
+        
         self.vars: StateStack[IntVar] = StateStack(sm)
+        
+    def add_variable(self, var: IntVar) -> None:
+        self.vars.push(var)
 
     def get_state_manager(self) -> StateManager:
         return self._sm
@@ -31,7 +35,7 @@ class TuringCP(CPSolver):
     def on_fix_point(self, listener: Procedure) -> None:
         self._fix_point_listeners.enqueue(listener)
 
-    def _notify_fix_point(self):
+    def _notify_fix_point(self) -> None:
         for listener in self._fix_point_listeners:
             listener()
 
@@ -64,3 +68,6 @@ class TuringCP(CPSolver):
         c.post()
         if enforce_fix_point:
             self.fix_point()
+
+    def __repr__(self) -> str:
+        return f'TuringCP(prop_q={repr(self._propagation_queue)})'

@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+
 from .domain import Domain
 
 class Variable:

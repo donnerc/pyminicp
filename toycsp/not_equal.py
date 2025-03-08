@@ -1,8 +1,7 @@
-from .constraint import Constraint  # Assuming constraint.py is in the same directory
-from .variable import Variable  # Assuming variable.py is in the same directory
-
 from typing import override
 
+from .constraint import Constraint  # Assuming constraint.py is in the same directory
+from .variable import Variable  # Assuming variable.py is in the same directory
 
 class NotEqual(Constraint):
     """

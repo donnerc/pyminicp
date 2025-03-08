@@ -105,7 +105,20 @@ class LinkedQueue(QueueADT, Generic[T]):
     LinkedQueue(items=[])
     >>> q.is_empty()
     True
-
+    
+    The queue can be iterated over using for ... in queue:
+    
+    >>> q1 = LinkedQueue(items=[2, 4, 6, 8])
+    >>> for n in q1: print(n)
+    2
+    4
+    6
+    8
+    >>> for n in q1: print(n)
+    2
+    4
+    6
+    8
     '''
 
 
@@ -190,6 +203,18 @@ class LinkedQueue(QueueADT, Generic[T]):
     def __repr__(self) -> str:
         return f'LinkedQueue(items={self.to_list()})'
 
+
+    def __iter__(self):
+        self._cursor = self._head
+        return self
+    
+    def __next__(self):
+        if self._cursor is not None:
+            item: T = self._cursor._element
+            self._cursor = self._cursor._next
+            return item
+
+        raise StopIteration
 
 if __name__ == '__main__':
     import doctest

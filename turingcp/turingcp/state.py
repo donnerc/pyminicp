@@ -13,8 +13,6 @@ from stack import Stack
 from util_types import Procedure
 from state_types import *
 
-from stack import Stack
-
 
 class Copy[T](Storage, State[T]):
 
@@ -51,6 +49,20 @@ class CopyInt(Copy[int], StateInt):
 
     def __init__(self, init_value: int) -> None:
         super().__init__(init_value)
+
+
+class NewState:
+
+    def __init__(self, sm: StateManager) -> None:
+        self._level: int = -1
+        self.sm: StateManager = sm
+
+    def __enter__(self) -> None:
+        self._level = self.sm.get_level()
+        self.sm.save_state()
+
+    def __exit__(self, exc_type, exc_value, exc_tb) -> None:
+        self.sm.restore_state_until(self._level)
 
 
 class CopyStateManager(StateManager):
@@ -148,7 +160,6 @@ class CopyStateManager(StateManager):
 
     def save_state(self) -> None:
         self.prior.push(self.Backup(self.store))
-        print(self.prior)
 
     def restore_state(self) -> None:
         self.prior.pop().restore()
@@ -157,6 +168,12 @@ class CopyStateManager(StateManager):
     def restore_state_until(self, level: int) -> None:
         while self.get_level() > level:
             self.restore_state()
+
+    def with_new_state(self, proc: Procedure) -> None:
+        level: int = self.get_level()
+        self.save_state()
+        proc()
+        self.restore_state_until(level)
 
     def make_state_int(self, init_value: int) -> StateInt:
         """
@@ -167,9 +184,9 @@ class CopyStateManager(StateManager):
         return s
 
     def make_state_obj[T](self, obj: T) -> State[T]:
-        '''
+        """
         >>> sm = CopyStateManager()
-        >>> obj = sm.make_state_obj(True)        
+        >>> obj = sm.make_state_obj(True)
         >>> obj
         Copy(True)
         >>> sm.save_state()
@@ -178,9 +195,9 @@ class CopyStateManager(StateManager):
         False
         >>> obj
         Copy(False)
-        
+
         >>> sm = CopyStateManager()
-        >>> obj = sm.make_state_obj([1, 2, 3])        
+        >>> obj = sm.make_state_obj([1, 2, 3])
         >>> obj
         Copy([1, 2, 3])
         >>> sm.save_state()
@@ -192,10 +209,11 @@ class CopyStateManager(StateManager):
         >>> sm.restore_state()
         >>> obj
         Copy([1, 2, 3])
-        '''
+        """
         r: Copy = Copy(init_value=obj)
         self.store.push(r)
         return r
+
 
 if __name__ == "__main__":
     import doctest

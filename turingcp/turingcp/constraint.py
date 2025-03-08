@@ -1,8 +1,8 @@
-from cp_types import Constraint, Variable
+from cp_types import Constraint
 from state_types import State
-from turingcp.cp_types import CPSolver
-from turingcp.cp_types import IntVar
-from turingcp.util_types import Procedure
+from cp_types import CPSolver
+from cp_types import IntVar
+from util_types import Procedure
 
 
 class AbstractConstraint(Constraint):
@@ -71,6 +71,7 @@ class FuncConstraint(AbstractConstraint):
         super().__init__(solver)
         self.filtering = filtering
 
+    # intentionally left blank: nothing to be done
     def post(self) -> None: ...
 
     def propagate(self) -> None:
@@ -99,8 +100,8 @@ class NotEqual(AbstractConstraint):
             y.remove(x.min() - self._offset)
         else:
             # This constraint can only propagate on domain fix
-            x.propagate_on_fix()
-            y.propagate_on_fix()
+            x.propagate_on_fix(self)
+            y.propagate_on_fix(self)
 
     def propagate(self) -> None:
         x, y = self._x, self._y
@@ -108,7 +109,14 @@ class NotEqual(AbstractConstraint):
             x.remove(y.min() + self._offset)
         else:
             y.remove(x.min() - self._offset)
+            
+        # once propagated, this constraint should never be rescheduled => no
+        # more pruning possible further down the search tree ... will only be
+        # reactivated on backtrack for a different value
         self.set_active(False)
+        
+    def __repr__(self) -> str:
+        return f"NotEqual(x={self._x}, y={self._y})"
 
 
 class Equal(AbstractConstraint):
@@ -125,6 +133,10 @@ class Equal(AbstractConstraint):
     def _prune_equals(
         self, from_var: IntVar, to_var: IntVar, values: list[int]
     ) -> None: 
+        '''
+        Applies domain consistent filtering in the direction `from_var` ->
+        `to_var` such that every value of `to_var` has a support in `from_var`
+        '''
         ...
 
     def _bounds_intersect(self) -> None:
@@ -161,4 +173,5 @@ class Equal(AbstractConstraint):
                 )
             )
 
-    def propagate(self) -> None: ...
+    def propagate(self) -> None:
+        ...

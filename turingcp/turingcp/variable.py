@@ -62,9 +62,15 @@ class IntVarImpl(IntVar):
         self.solver: CPSolver = solver
         self.domain: IntDomain = SparseSetDomain(sm, values)
         self.name = name or f"Var_{IntVarImpl.var_counter}"
+        
+        # add the variable to the solver variable stack
+        self.solver.add_variable(self)
 
         IntVarImpl.var_counter += 1
 
+        # the variable maintains stacks of constraints that have
+        # to be propagated when different type of changes happen
+        # on the domain
         self._on_domain: StateStack[Constraint] = StateStack(sm)
         self._on_fix: StateStack[Constraint] = StateStack(sm)
         self._on_bound: StateStack[Constraint] = StateStack(sm)
@@ -114,13 +120,13 @@ class IntVarImpl(IntVar):
         return c
 
     def propagate_on_domain_change(self, c: Constraint) -> None:
-        self._on_fix.push(c)
+        self._on_domain.push(c)
 
     def propagate_on_fix(self, c: Constraint) -> None:
-        self._on_bound.push(c)
+        self._on_fix.push(c)
 
     def propagate_on_bound_change(self, c: Constraint) -> None:
-        self._on_domain.push(c)
+        self._on_bound.push(c)
 
     def min(self) -> int:
         return self.domain.min()
@@ -145,7 +151,12 @@ class IntVarImpl(IntVar):
 
     def remove_above(self, v: int) -> None:
         self.domain.remove_above(v, self._domain_listener)
-
+        
+    def fill_list(self, dest: list[int]) -> int:
+        for i in range(len(self.domain)):
+            dest[i] = self.domain[i]
+        return len(self.domain)
+    
     def __contains__(self, v: int) -> bool:
         return v in self.domain
 
