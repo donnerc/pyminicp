@@ -26,6 +26,7 @@ def nqueens(n: int = 8) -> list[NQueensSolution]:
     def handle_solution(dfs, infos):
         solutions.append(get_values(q))
 
+    '''
     @dfs.branching_strategy
     def branching():
         def left():
@@ -45,6 +46,7 @@ def nqueens(n: int = 8) -> list[NQueensSolution]:
         v: int = var.min()
 
         return [left, right]
+    '''
 
     dfs.solve()
 

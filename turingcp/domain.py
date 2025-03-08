@@ -33,7 +33,6 @@ class SparseSetDomain(IntDomain):
     >>> d
     SparseSetDomain([6, 8, 9])
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(3), CopyStateEntry(1), CopyStateEntry(4)])])
     >>> d.remove_below(9, listener)
     fixed
     min changed
@@ -51,7 +50,6 @@ class SparseSetDomain(IntDomain):
     >>> d
     SparseSetDomain([6, 8, 9])
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(3), CopyStateEntry(1), CopyStateEntry(4)])])
     >>> d.remove_above(6, listener)
     fixed
     min changed
@@ -60,7 +58,6 @@ class SparseSetDomain(IntDomain):
     SparseSetDomain([6])
     >>> sm.restore_state()
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(3), CopyStateEntry(1), CopyStateEntry(4)])])
     >>> d
     SparseSetDomain([6, 8, 9])
     >>> d.remove_all_but(8, listener)

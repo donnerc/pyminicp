@@ -60,7 +60,6 @@ class NewState:
     def __enter__(self) -> None:
         self._level = self.sm.get_level()
         self.sm.save_state()
-
     def __exit__(self, exc_type, exc_value, exc_tb) -> None:
         self.sm.restore_state_until(self._level)
 
@@ -76,14 +75,12 @@ class CopyStateManager(StateManager):
     >>> x.value()
     1
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(1)])])
     >>> sm.get_level()
     0
     >>> x.set_value(2)
     2
     >>> y = sm.make_state_int(10)
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(1)]), Backup([CopyStateEntry(2), CopyStateEntry(10)])])
     >>> sm.get_level()
     1
     >>> x.set_value(3)
@@ -114,7 +111,6 @@ class CopyStateManager(StateManager):
     >>> sm = CopyStateManager()
     >>> z = [sm.make_state_int(2 * i) for i in range(3)]
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(0), CopyStateEntry(2), CopyStateEntry(4)])])
     >>> for x in z: x.increment()
     1
     3
@@ -190,7 +186,6 @@ class CopyStateManager(StateManager):
         >>> obj
         Copy(True)
         >>> sm.save_state()
-        Stack([Backup([CopyStateEntry(True)])])
         >>> obj.set_value(False)
         False
         >>> obj
@@ -201,7 +196,6 @@ class CopyStateManager(StateManager):
         >>> obj
         Copy([1, 2, 3])
         >>> sm.save_state()
-        Stack([Backup([CopyStateEntry([1, 2, 3])])])
         >>> obj.set_value("this is a bad example")
         'this is a bad example'
         >>> obj

@@ -399,7 +399,6 @@ def state_tests():
     >>> sm = CopyStateManager()
     >>> s = StateSparseSet(sm, range(5))
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(5), CopyStateEntry(0), CopyStateEntry(4)])])
     >>> s.remove(3)
     True
     >>> s
@@ -407,11 +406,9 @@ def state_tests():
     >>> s.remove(1)
     True
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(5), CopyStateEntry(0), CopyStateEntry(4)]), Backup([CopyStateEntry(3), CopyStateEntry(0), CopyStateEntry(4)])])
     >>> s.remove(4)
     True
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(5), CopyStateEntry(0), CopyStateEntry(4)]), Backup([CopyStateEntry(3), CopyStateEntry(0), CopyStateEntry(4)]), Backup([CopyStateEntry(2), CopyStateEntry(0), CopyStateEntry(2)])])
     >>> s.remove(0)
     True
     >>> s

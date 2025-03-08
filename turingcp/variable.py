@@ -27,7 +27,6 @@ class IntVarImpl(IntVar):
     >>> 18 in x
     False
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(0), CopyStateEntry(5), CopyStateEntry(0), CopyStateEntry(6), CopyStateEntry(0), CopyStateEntry(0), CopyStateEntry(0)])])
     >>> x.remove(3)
     >>> x
     IntVar(domain=SparseSetDomain([2, 4, 6, 8]), name='Var_0')

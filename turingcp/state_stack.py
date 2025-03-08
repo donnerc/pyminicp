@@ -134,17 +134,14 @@ def test_restore():
     >>> sm = CopyStateManager()
     >>> s = StateStack(sm, [4, 6, 8])
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(3)])])
     >>> s.pop()
     8
     >>> s
     StateStack([4, 6])
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(3)]), Backup([CopyStateEntry(2)])])
     >>> s.pop()
     6
     >>> sm.save_state()
-    Stack([Backup([CopyStateEntry(3)]), Backup([CopyStateEntry(2)]), Backup([CopyStateEntry(1)])])
     >>> s.pop()
     4
     >>> s
