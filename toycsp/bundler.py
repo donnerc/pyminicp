@@ -14,6 +14,7 @@ imports = []
 codelines = []
 
 my_modules = [
+    'types',
     'exceptions',
     'domain',
     'variable',
@@ -22,8 +23,7 @@ my_modules = [
     'csp',
 ]
 
-preamble = f'''
-#####################################################
+preamble = f'''#####################################################
 # Single file bundle of toycsp generated on {datetime.now()}
 # Do not modify file
 # Regenerate with 
@@ -45,6 +45,17 @@ for filename in [m + '.py' for m in my_modules]:
                     imports.append(line)
             else:
                 codelines += [line]
+                
+        # remove trailing empty lines
+        while codelines and codelines[-1].strip() == '':
+            codelines.pop()
+            
+        # remove leading empty lines
+        while codelines and codelines[0].strip() == '':
+            codelines.pop(0)
+                
+        # add some spacing between files
+        codelines += [''] * 2  
 
         
 imports_code = '\n'.join(imports)

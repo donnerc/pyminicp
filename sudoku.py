@@ -25,7 +25,11 @@ grid = [
 
 
 ############### Decision variables ###############################
-X: list[list[Variable | None]] = [[None] * 9 for _ in range(9)]
+
+# Pour éviter des problèmes avec le typage 
+EmptyVariable: Variable = Variable([])
+
+X: list[list[Variable]] = [[EmptyVariable] * 9 for _ in range(9)]
 for i in range(9):
     for j in range(9):
         Vij = grid[i][j]

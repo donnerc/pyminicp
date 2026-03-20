@@ -6,12 +6,12 @@ class Variable:
 
     var_counter = 0
     
-    def __init__(self, dom: Iterable[int], name: str = None) -> None:
+    def __init__(self, dom: Iterable[int], name: str | None = None) -> None:
         self.dom = Domain(set(dom))
         self.name = name or 'Var' + str(Variable.var_counter)
         Variable.var_counter += 1
         
-    def value(self) -> int:
+    def value(self) -> int | None:
         if self.dom.is_fixed():
             return self.dom.min()
         else:
