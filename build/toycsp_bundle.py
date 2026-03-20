@@ -1,5 +1,5 @@
 #####################################################
-# Single file bundle of toycsp generated on 2026-03-20 23:05:24.250725
+# Single file bundle of toycsp generated on 2026-03-21 00:26:59.467645
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
@@ -79,6 +79,15 @@ class Domain:
             The minimum value in the domain.
         """
         return min(self.values)
+    
+    def max(self) -> int:
+        """
+        Gets the maximum of the domain
+
+        Returns:
+            The maximum value in the domain.
+        """
+        return max(self.values)
 
     def remove(self, v: int) -> bool:
         """

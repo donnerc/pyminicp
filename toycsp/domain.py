@@ -58,6 +58,15 @@ class Domain:
             The minimum value in the domain.
         """
         return min(self.values)
+    
+    def max(self) -> int:
+        """
+        Gets the maximum of the domain
+
+        Returns:
+            The maximum value in the domain.
+        """
+        return max(self.values)
 
     def remove(self, v: int) -> bool:
         """
