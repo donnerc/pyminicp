@@ -20,3 +20,6 @@ class Variable:
     
     def __repr__(self) -> str:
         return f"Variable(dom={self.dom.values}, name='{self.name}')"
+    
+    def __str__(self) -> str:
+        return f"{self.name}({self.value() if self.value() is not None else self.dom.values})"

@@ -1,5 +1,5 @@
 #####################################################
-# Single file bundle of toycsp generated on 2026-03-21 01:55:59.928009
+# Single file bundle of toycsp generated on 2026-03-21 02:05:33.968123
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
@@ -131,6 +131,9 @@ class Domain:
 
     def __repr__(self) -> str:
         return f"Domain({self.values})"
+    
+    def __str__(self) -> str:
+        return f"{self.values}"
 
 
 
@@ -153,6 +156,9 @@ class Variable:
     
     def __repr__(self) -> str:
         return f"Variable(dom={self.dom.values}, name='{self.name}')"
+    
+    def __str__(self) -> str:
+        return f"{self.name}({self.value() if self.value() is not None else self.dom.values})"
 
 
 
@@ -208,6 +214,9 @@ class NotEqual(Constraint):
 
     def __repr__(self) -> str:
         return f'NotEqual(x={self.x}, y={self.y}, offset={self.offset})'
+
+    def __str__(self) -> str:
+        return f'{self.x.name} != {self.y.name} + {self.offset}'
 
 
 

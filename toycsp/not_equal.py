@@ -38,3 +38,5 @@ class NotEqual(Constraint):
     def __repr__(self) -> str:
         return f'NotEqual(x={self.x}, y={self.y}, offset={self.offset})'
 
+    def __str__(self) -> str:
+        return f'{self.x.name} != {self.y.name} + {self.offset}'

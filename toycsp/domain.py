@@ -110,3 +110,6 @@ class Domain:
 
     def __repr__(self) -> str:
         return f"Domain({self.values})"
+    
+    def __str__(self) -> str:
+        return f"{self.values}"
