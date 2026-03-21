@@ -29,7 +29,7 @@ def draw_chess_board(csp: ToyCSP, x: int = -200, y: int = -100, size: int = 50, 
     setPenColor(color)
     setFontSize(size * 0.95)
 
-    solution = csp.get_solution()
+    solution = csp.get_partial_solution()
     n = len(solution)
 
     for i in range(n):
