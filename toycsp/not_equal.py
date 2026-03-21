@@ -10,7 +10,7 @@ class NotEqual(Constraint):
 
     def __init__(self, x: Variable, y: Variable, offset: int = 0) -> None:
         """
-        Initializes the NotEqual constraint.
+        Initializes the NotEqual constraint (x != y + offset).
 
         Args:
             x: The first variable.

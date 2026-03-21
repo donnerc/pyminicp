@@ -1,5 +1,5 @@
 #####################################################
-# Single file bundle of toycsp generated on 2026-03-21 00:26:59.467645
+# Single file bundle of toycsp generated on 2026-03-21 01:55:59.928009
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
@@ -181,7 +181,7 @@ class NotEqual(Constraint):
 
     def __init__(self, x: Variable, y: Variable, offset: int = 0) -> None:
         """
-        Initializes the NotEqual constraint.
+        Initializes the NotEqual constraint (x != y + offset).
 
         Args:
             x: The first variable.
@@ -239,11 +239,12 @@ class ToyCSP:
 
         Args:
             domain: An iterable of integers representing the domain values.
+            name: An optional name for the variable.
 
         Returns:
             A new Variable object.
         """
-        var = Variable(domain)
+        var = Variable(domain, name)
         self.variables.append(var)
         return var
 

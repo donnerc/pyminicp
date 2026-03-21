@@ -35,11 +35,12 @@ class ToyCSP:
 
         Args:
             domain: An iterable of integers representing the domain values.
+            name: An optional name for the variable.
 
         Returns:
             A new Variable object.
         """
-        var = Variable(domain)
+        var = Variable(domain, name)
         self.variables.append(var)
         return var
 
