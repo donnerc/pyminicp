@@ -1,5 +1,5 @@
 #####################################################
-# Single file bundle of toycsp generated on 2026-03-21 02:05:33.968123
+# Single file bundle of toycsp generated on 2026-03-21 08:10:10.063272
 # Do not modify file
 # Regenerate with 
 #   python bundler.py > csp_bundle.py
@@ -158,7 +158,7 @@ class Variable:
         return f"Variable(dom={self.dom.values}, name='{self.name}')"
     
     def __str__(self) -> str:
-        return f"{self.name}({self.value() if self.value() is not None else self.dom.values})"
+        return f"{self.name}({self.dom.values})"
 
 
 
