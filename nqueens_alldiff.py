@@ -1,4 +1,4 @@
-from toycsp import ToyCSP, Variable, NotEqual, csp
+from toycsp import ToyCSP, Variable, GACAllDifferent3 as AllDifferent
 
 def nqueens(n: int):
     # problème
@@ -6,15 +6,15 @@ def nqueens(n: int):
     # variables de décision
     q: list[Variable] = [csp.add_variable(range(n)) for _ in range(n)]
 
-    ## Déclaration des contraintes du problème
-    for i in range(n):
-        for j in range(i + 1, n):
-            # Pas deux reines sur la même ligne,
-            csp.post(NotEqual(q[i], q[j], 0))
-            # Pas deux reines sur une diagonale montante
-            csp.post(NotEqual(q[i], q[j], i - j))
-            # Pas deux reines sur une diagonale descendante
-            csp.post(NotEqual(q[i], q[j], j - i))
+    # 1. Une dame par colonne (déjà géré par la structure du problème : queens[i] est la ligne en col i)
+    # 2. Toutes les lignes doivent être différentes
+    csp.post(AllDifferent(q, pigeonhole=False))
+
+    # 3. Diagonales montantes : Xi + i doit être différent
+    csp.post(AllDifferent(q, offsets=[i for i in range(n)], pigeonhole=False))
+
+    # 4. Diagonales descendantes : Xi - i doit être différent
+    csp.post(AllDifferent(q, offsets=[-i for i in range(n)], pigeonhole=False))
     
     @csp.on('solution')
     def handle_solution(csp, infos):
@@ -23,7 +23,6 @@ def nqueens(n: int):
 
     solutions = []
     csp.dfs()
-    
     
     return solutions
 
@@ -37,9 +36,9 @@ try:
     n = int(sys.argv[1])
 except:
     n = 4
-    
+
 with Profile() as profile:
-    print(f"{nqueens(n) = }\n\nfor {n = }")
+    print(f"{len(nqueens(n)) = }\n\nfor {n = }")
     (
         Stats(profile)
         .strip_dirs()

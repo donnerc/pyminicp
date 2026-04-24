@@ -1,4 +1,4 @@
-from typing import override
+# from typing import override
 
 from .constraint import Constraint  # Assuming constraint.py is in the same directory
 from .variable import Variable  # Assuming variable.py is in the same directory
@@ -21,7 +21,7 @@ class NotEqual(Constraint):
         self.y = y
         self.offset = offset
 
-    @override
+    # @override
     def propagate(self) -> bool:
         """
         Propagates the NotEqual constraint.

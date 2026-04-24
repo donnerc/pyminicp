@@ -1,3 +1,3 @@
 
-type PartialSolution = list[int | None]
-type Solution = list[int]
+PartialSolution = list[int | None]
+Solution = list[int]
