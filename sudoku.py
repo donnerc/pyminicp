@@ -25,8 +25,6 @@ def all_different(csp: ToyCSP, vars: list[Variable]) -> None:
         for j in range(i + 1, n):
             csp.post(NotEqual(vars[i], vars[j]))
 
-csp: ToyCSP = ToyCSP()
-
 
 ############### Parameters #######################################
 grid = [
@@ -57,6 +55,7 @@ grid = grid_inkala
 grid = load_grids('sudokus.txt')[1]
 
 def sudoku_solver(grid: list[list[int]]):
+    csp: ToyCSP = ToyCSP()
     ############### Decision variables ###############################
 
     # Pour éviter des problèmes avec le typage 
