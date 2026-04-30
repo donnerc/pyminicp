@@ -8,10 +8,9 @@ def load_grids(filename: str) -> list[list[list[int]]]:
         lines = f.read().splitlines()
     grids = []
     for line in lines:
-        if line.strip() == '':
-            continue
-        grid = convert_to_grid(line)
-        grids.append(grid)
+        if line.strip() != '':
+            grid = convert_to_grid(line)
+            grids.append(grid)
     return grids
 
 def convert_to_grid(line: str) -> list[list[int]]:
@@ -38,21 +37,6 @@ grid = [
         [1, 2, 0, 0, 0, 7, 4, 0, 0],
         [0, 4, 9, 2, 0, 6, 0, 0, 7]
     ]
-
-grid_inkala = [
-    [8,0,0,0,0,0,0,0,0],
-    [0,0,3,6,0,0,0,0,0],
-    [0,7,0,0,9,0,2,0,0],
-    [0,5,0,0,0,7,0,0,0],
-    [0,0,0,0,4,5,7,0,0],
-    [0,0,0,1,0,0,0,3,0],
-    [0,0,1,0,0,0,0,6,8],
-    [0,0,8,5,0,0,0,1,0],
-    [0,9,0,0,0,0,4,0,0]
-]
-
-grid = grid_inkala
-grid = load_grids('sudokus.txt')[1]
 
 def sudoku_solver(grid: list[list[int]]):
     csp: ToyCSP = ToyCSP()
